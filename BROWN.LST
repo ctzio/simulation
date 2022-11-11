@@ -1,0 +1,39 @@
+' VSETCOLOR 2,15,15,15
+' VSETCOLOR 3,1,1,1
+DIM parts&(10,1)
+DIM oldparts&(10,1)
+DIM screen|(640,480)
+screen|(320,200)=1
+DEFFN newx=r*COSQ(RAND(360))
+DEFFN newy=r*SINQ(RAND(360))
+FOR i&=0 TO 9
+  fi=RAND(360)
+  parts&(i&,0)=320+20*COSQ(fi)
+  parts&(i&,1)=240+20*SINQ(fi)
+  COLOR 1
+  PLOT parts&(i&,0),parts&(i&,1)
+NEXT i&
+REPEAT
+  FOR i&=0 TO 9
+    dice%=CINT(RAND(4))
+    SELECT (dice%)
+    CASE 0
+      parts&(i&,0)=parts&(i&,0)+1
+    CASE 1
+      parts&(i&,0)=parts&(i&,0)-1
+    CASE 2
+      parts&(i&,1)=parts&(i&,1)+1
+    CASE 3
+      parts&(i&,1)=parts&(i&,1)-1
+    ENDSELECT
+    COLOR 1
+    PLOT parts&(i&,0),parts&(i&,1)
+    oldparts&(i&,0)=parts&(i&,0)
+    oldparts&(i&,1)=parts&(i&,1)
+    VSYNC
+    COLOR 0
+    PLOT oldparts&(i&,0),oldparts&(i&,1)
+  NEXT i&
+  VSYNC
+  INC particles%
+UNTIL particles%=500
