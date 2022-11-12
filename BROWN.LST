@@ -1,19 +1,29 @@
 ' VSETCOLOR 2,15,15,15
 ' VSETCOLOR 3,1,1,1
+'
+physical%=XBIOS(2)
+logical%=XBIOS(3)
+bufsize%=XBIOS(91)
+DIM buffer|(bufsize%)
+buffer%=(V:buffer|(0)+255) AND &HFFFFFF00
+COLOR 1
+PCIRCLE 2,2,2
+GET 0,0,4,4,mypart$
 DIM parts&(10,1)
 DIM oldparts&(10,1)
-DIM screen|(640,480)
-screen|(320,200)=1
+DIM screen|(160,120)
+screen|(80,60)=1
 DEFFN newx=r*COSQ(RAND(360))
 DEFFN newy=r*SINQ(RAND(360))
 FOR i&=0 TO 9
   fi=RAND(360)
   parts&(i&,0)=320+20*COSQ(fi)
   parts&(i&,1)=240+20*SINQ(fi)
-  COLOR 1
+  COLOR 0
   PLOT parts&(i&,0),parts&(i&,1)
 NEXT i&
 REPEAT
+  ~XBIOS(5,L:buffer%,L:-1,-1)
   FOR i&=0 TO 9
     dice%=CINT(RAND(4))
     SELECT (dice%)
@@ -26,14 +36,15 @@ REPEAT
     CASE 3
       parts&(i&,1)=parts&(i&,1)-1
     ENDSELECT
-    COLOR 1
-    PLOT parts&(i&,0),parts&(i&,1)
+    COLOR 0
+    PUT parts&(i&,0),parts&(i&,1),mypart$
     oldparts&(i&,0)=parts&(i&,0)
     oldparts&(i&,1)=parts&(i&,1)
-    VSYNC
-    COLOR 0
-    PLOT oldparts&(i&,0),oldparts&(i&,1)
+    '    COLOR 1
+    '    PLOT oldparts&(i&,0),oldparts&(i&,1)
   NEXT i&
+  SWAP buffer%,logical%
+  ~XBIOS(5,L:buffer%,L:physical%,-1)
   VSYNC
   INC particles%
 UNTIL particles%=500
